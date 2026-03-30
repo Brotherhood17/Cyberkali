@@ -856,7 +856,7 @@
     const price = (rate * qty / 1000).toFixed(2);
     calcPriceEl.textContent = qty > 0 ? 'GH\u00a2 ' + price : 'GH\u00a2 0.00';
     const label = serviceSelect.options[serviceSelect.selectedIndex].text.replace(/\s*\(.*\)/, '').trim();
-    calcOrderBtn.href = 'https://wa.me/233538399881?text=Hi%20BillSMM!%20I%20want%20to%20order%3A%0AService%3A%20' + encodeURIComponent(label) + '%0AQuantity%3A%20' + qty + '%0ATotal%3A%20GH%C2%A2' + price + '%0AMy%20link%3A%20';
+    // Order via payment modal (handled by payment JS below)
   }
   serviceSelect.addEventListener('change', updateCalc);
   qtyInput.addEventListener('input', updateCalc);
@@ -1127,11 +1127,11 @@ if (bundleBtn) {
 }
 
 // Calc order button → open modal with pre-selected service
-const calcOrderBtn = document.getElementById('calcOrder');
-if (calcOrderBtn) {
-  calcOrderBtn.removeAttribute('href');
-  calcOrderBtn.style.cursor = 'pointer';
-  calcOrderBtn.addEventListener('click', (e) => {
+const calcOrderBtnPay = document.getElementById('calcOrder');
+if (calcOrderBtnPay) {
+  calcOrderBtnPay.removeAttribute('href');
+  calcOrderBtnPay.style.cursor = 'pointer';
+  calcOrderBtnPay.addEventListener('click', (e) => {
     e.preventDefault();
     const serviceSelect = document.getElementById('calcService');
     const label = serviceSelect.options[serviceSelect.selectedIndex].text.replace(/\s*\(.*\)/, '').trim();
