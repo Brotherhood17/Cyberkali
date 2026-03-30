@@ -7,6 +7,30 @@
   <meta name="description" content="Boost any platform: Instagram, TikTok, YouTube, Telegram, Audiomack, Spotify & more. Manual quality delivery starting GH¢ 10 per 1000." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    const firebaseConfig = {
+      apiKey: "AIzaSyAnBrng6pvClrb5YjOblRI4OkmTMK1KfXc",
+      authDomain: "billsmmpro.firebaseapp.com",
+      projectId: "billsmmpro",
+      storageBucket: "billsmmpro.firebasestorage.app",
+      messagingSenderId: "738364887781",
+      appId: "1:738364887781:web:292e0f1aee6866e622ba0c",
+      measurementId: "G-WMCCHMKR6K"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    window._db = db;
+    window._addDoc = addDoc;
+    window._collection = collection;
+    window._serverTimestamp = serverTimestamp;
+    window._firebaseReady = true;
+    document.dispatchEvent(new Event('firebaseReady'));
+  </script>
+  <!-- Paystack -->
+  <script src="https://js.paystack.co/v1/inline.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -202,6 +226,76 @@
       .bundle, .calc-box { padding: 24px 16px; }
       .hero { padding: 50px 16px 40px; }
       .wa-bubble-label { display: none; }
+    }
+
+    /* ── PAYMENT MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 18px; padding: 32px 28px; width: 100%; max-width: 480px;
+      position: relative; animation: modalIn .3s ease;
+    }
+    @keyframes modalIn { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    .modal-close {
+      position: absolute; top: 16px; right: 18px;
+      background: none; border: none; color: var(--muted);
+      font-size: 1.5rem; cursor: pointer; line-height: 1;
+    }
+    .modal h2 { font-size: 1.2rem; font-weight: 900; margin-bottom: 4px; }
+    .modal-service-name { font-size: 0.85rem; color: var(--green); font-weight: 700; margin-bottom: 20px; }
+    .modal-field { margin-bottom: 14px; }
+    .modal-field label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .modal-field input, .modal-field select {
+      width: 100%; background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text); font-size: 0.92rem; font-family: 'Inter', sans-serif;
+      padding: 11px 14px; border-radius: 8px; outline: none;
+    }
+    .modal-field input:focus, .modal-field select:focus { border-color: var(--green); }
+    .modal-price-display {
+      background: #0a1a0a; border: 1px solid #1a3a1a; border-radius: 10px;
+      padding: 14px 18px; display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 18px;
+    }
+    .modal-price-display .label { font-size: 0.82rem; color: var(--muted); }
+    .modal-price-display .amount { font-size: 1.6rem; font-weight: 900; color: var(--green); }
+    .btn-pay {
+      width: 100%; background: var(--green); color: #000; font-weight: 800;
+      font-size: 1rem; padding: 14px; border-radius: 50px; border: none;
+      cursor: pointer; font-family: 'Inter', sans-serif; transition: background .2s;
+    }
+    .btn-pay:hover { background: #1ebe5a; }
+    .btn-pay:disabled { background: #2a4a2a; color: var(--muted); cursor: not-allowed; }
+    .modal-note { text-align: center; font-size: 0.78rem; color: var(--muted); margin-top: 12px; }
+    .modal-note span { color: var(--green); font-weight: 700; }
+
+    /* ── SUCCESS SCREEN ── */
+    .success-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1100;
+      background: rgba(0,0,0,0.92); align-items: center; justify-content: center;
+    }
+    .success-overlay.open { display: flex; }
+    .success-box {
+      background: var(--bg2); border: 1px solid #2d4a2d; border-radius: 18px;
+      padding: 40px 32px; text-align: center; max-width: 400px; width: 90%;
+      animation: modalIn .3s ease;
+    }
+    .success-icon { font-size: 3.5rem; margin-bottom: 16px; }
+    .success-box h2 { font-size: 1.4rem; font-weight: 900; margin-bottom: 10px; }
+    .success-box p { font-size: 0.9rem; color: var(--muted); margin-bottom: 6px; }
+    .success-ref { font-size: 0.78rem; color: var(--green); font-weight: 700; margin: 8px 0 20px; }
+    .btn-success-wa {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green); color: #000; font-weight: 800;
+      font-size: 0.9rem; padding: 12px 26px; border-radius: 50px;
+    }
+    .btn-close-success {
+      display: block; margin: 12px auto 0; background: none; border: none;
+      color: var(--muted); font-size: 0.82rem; cursor: pointer; font-family: 'Inter', sans-serif;
     }
   </style>
 </head>
@@ -642,6 +736,62 @@
 </section>
 
 <!-- FOOTER -->
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">×</button>
+    <h2>💳 Complete Your Order</h2>
+    <div class="modal-service-name" id="modalServiceName">Instagram Followers</div>
+
+    <div class="modal-field">
+      <label>Your Name</label>
+      <input type="text" id="modalName" placeholder="e.g. Kofi Mensah" />
+    </div>
+    <div class="modal-field">
+      <label>Phone (MoMo Number)</label>
+      <input type="tel" id="modalPhone" placeholder="e.g. 0241234567" />
+    </div>
+    <div class="modal-field">
+      <label>Email (for receipt)</label>
+      <input type="email" id="modalEmail" placeholder="e.g. kofi@gmail.com" />
+    </div>
+    <div class="modal-field">
+      <label>Your Social Media Link / Profile URL</label>
+      <input type="url" id="modalLink" placeholder="e.g. https://instagram.com/yourprofile" />
+    </div>
+    <div class="modal-field">
+      <label>Quantity</label>
+      <select id="modalQty"></select>
+    </div>
+
+    <div class="modal-price-display">
+      <div>
+        <div class="label">Total to pay</div>
+        <div class="amount" id="modalAmount">GH¢ 0.00</div>
+      </div>
+      <div style="font-size:0.78rem;color:var(--muted);text-align:right;">MoMo / Card<br>accepted</div>
+    </div>
+
+    <button class="btn-pay" id="btnPay">📲 Pay with MoMo / Card</button>
+    <p class="modal-note">Secure payment via <span>Paystack</span> • MoMo, Vodafone Cash & Cards accepted</p>
+  </div>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="success-icon">✅</div>
+    <h2>Payment Received!</h2>
+    <p>Your order has been placed successfully.</p>
+    <p>We'll start delivery within <strong>1–6 hours</strong>.</p>
+    <div class="success-ref" id="successRef">Ref: —</div>
+    <a href="https://wa.me/233538399881?text=Hi!%20I%20just%20paid%20for%20my%20order.%20My%20reference%20is%3A%20" class="btn-success-wa" id="successWaBtn">
+      💬 Confirm on WhatsApp
+    </a>
+    <button class="btn-close-success" id="closeSuccess">Close</button>
+  </div>
+</div>
+
 <footer>
   <p>© 2026 BillSMM.pro – Followers, Views &amp; Engagement for All Platforms</p>
   <p style="margin-top:6px;">WhatsApp: <a href="https://wa.me/233538399881">+233 538399881</a> &nbsp;•&nbsp; Safe &nbsp;•&nbsp; No passwords asked &nbsp;•&nbsp; Refunds if undelivered</p>
@@ -756,6 +906,240 @@
     toastIdx++;
   }
   setTimeout(() => { showToast(); setInterval(showToast, 13000); }, 4000);
+</script>
+<!-- ── PAYMENT & FIREBASE INTEGRATION ── -->
+<script>
+// ── SERVICE CATALOG (name → rate per 1000 in GHc) ──
+const SERVICES = [
+  { name: "📸 Instagram Followers – Premium", rate: 60,  platform: "Instagram" },
+  { name: "📸 Instagram Views",               rate: 11.5, platform: "Instagram" },
+  { name: "📸 Instagram Likes",               rate: 20,  platform: "Instagram" },
+  { name: "🎵 TikTok Followers (Ghanaian)",   rate: 70,  platform: "TikTok" },
+  { name: "🎵 TikTok Video Views",            rate: 13.5, platform: "TikTok" },
+  { name: "🎵 TikTok Likes",                  rate: 50,  platform: "TikTok" },
+  { name: "📺 YouTube Subscribers",           rate: 120, platform: "YouTube" },
+  { name: "📺 YouTube Views",                 rate: 80,  platform: "YouTube" },
+  { name: "📺 YouTube Likes",                 rate: 70,  platform: "YouTube" },
+  { name: "✈ Telegram Members",              rate: 50,  platform: "Telegram" },
+  { name: "✈ Telegram Views",                rate: 35,  platform: "Telegram" },
+  { name: "✈ Telegram Reactions",            rate: 20,  platform: "Telegram" },
+  { name: "🎧 Audiomack Plays",               rate: 50,  platform: "Audiomack" },
+  { name: "🎧 Audiomack Followers",           rate: 100, platform: "Audiomack" },
+  { name: "🎼 Spotify Streams",               rate: 70,  platform: "Spotify" },
+  { name: "⛓ LinkedIn Followers",            rate: 50,  platform: "LinkedIn" },
+  { name: "👾 Twitch Followers",              rate: 75,  platform: "Twitch" },
+  { name: "👾 Twitch Views",                  rate: 90,  platform: "Twitch" },
+  { name: "📱 WhatsApp Channel Followers",    rate: 300, platform: "WhatsApp" },
+  // Bundles
+  { name: "🔥 TikTok Growth Bundle",          rate: 0,   flatPrice: 250, platform: "TikTok" },
+  { name: "📸 Instagram Starter Pack",        rate: 0,   flatPrice: 120, platform: "Instagram" },
+  { name: "🎵📸 TikTok + Instagram Combo",   rate: 0,   flatPrice: 170, platform: "TikTok" },
+  { name: "🎧📺 Music Creator Pack",          rate: 0,   flatPrice: 160, platform: "Music" },
+];
+
+const QUANTITIES = [500, 1000, 2000, 3000, 5000, 10000, 20000, 50000];
+const PAYSTACK_PUBLIC_KEY = "sk_test_5ff620fe1a7751913863c86e2f8fef0dd4d3b39b"; // ← REPLACE with your Paystack public key
+
+// ── MODAL STATE ──
+let currentService = null;
+
+const modal        = document.getElementById('payModal');
+const modalClose   = document.getElementById('modalClose');
+const modalSvcName = document.getElementById('modalServiceName');
+const modalQtySel  = document.getElementById('modalQty');
+const modalAmount  = document.getElementById('modalAmount');
+const btnPay       = document.getElementById('btnPay');
+const successOverlay = document.getElementById('successOverlay');
+const successRef     = document.getElementById('successRef');
+const successWaBtn   = document.getElementById('successWaBtn');
+const closeSuccess   = document.getElementById('closeSuccess');
+
+// ── OPEN MODAL ──
+function openPayModal(serviceIndex) {
+  currentService = SERVICES[serviceIndex];
+  modalSvcName.textContent = currentService.name;
+
+  // Build qty options
+  modalQtySel.innerHTML = '';
+  if (currentService.flatPrice) {
+    // Bundle — fixed price, no qty selector
+    const opt = document.createElement('option');
+    opt.value = 1;
+    opt.textContent = '1 Bundle';
+    modalQtySel.appendChild(opt);
+    modalQtySel.disabled = true;
+    modalAmount.textContent = `GH¢ ${currentService.flatPrice.toFixed(2)}`;
+  } else {
+    modalQtySel.disabled = false;
+    QUANTITIES.forEach(q => {
+      const price = (currentService.rate * q / 1000).toFixed(2);
+      const opt = document.createElement('option');
+      opt.value = q;
+      opt.textContent = `${q.toLocaleString()} units — GH¢ ${price}`;
+      modalQtySel.appendChild(opt);
+    });
+    updateModalPrice();
+  }
+
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function updateModalPrice() {
+  if (!currentService || currentService.flatPrice) return;
+  const qty = parseInt(modalQtySel.value) || 0;
+  const price = (currentService.rate * qty / 1000).toFixed(2);
+  modalAmount.textContent = `GH¢ ${price}`;
+}
+
+function closeModal() {
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+modalClose.addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+modalQtySel.addEventListener('change', updateModalPrice);
+
+// ── GET CURRENT AMOUNT IN PESEWAS ──
+function getAmountPesewas() {
+  if (currentService.flatPrice) return currentService.flatPrice * 100;
+  const qty = parseInt(modalQtySel.value) || 0;
+  return Math.round(currentService.rate * qty / 1000 * 100);
+}
+
+// ── PAY BUTTON ──
+btnPay.addEventListener('click', () => {
+  const name  = document.getElementById('modalName').value.trim();
+  const phone = document.getElementById('modalPhone').value.trim();
+  const email = document.getElementById('modalEmail').value.trim();
+  const link  = document.getElementById('modalLink').value.trim();
+
+  if (!name)  { alert('Please enter your name.'); return; }
+  if (!phone) { alert('Please enter your MoMo phone number.'); return; }
+  if (!email) { alert('Please enter your email for a receipt.'); return; }
+  if (!link)  { alert('Please paste your social media link.'); return; }
+
+  const amountPesewas = getAmountPesewas();
+  if (amountPesewas < 100) { alert('Minimum order is GH¢ 1.'); return; }
+
+  const qty = currentService.flatPrice ? 1 : parseInt(modalQtySel.value);
+  const ref = 'BSMM-' + Date.now();
+
+  btnPay.disabled = true;
+  btnPay.textContent = 'Opening payment…';
+
+  const handler = PaystackPop.setup({
+    key: PAYSTACK_PUBLIC_KEY,
+    email: email,
+    amount: amountPesewas,
+    currency: 'GHS',
+    ref: ref,
+    firstname: name.split(' ')[0],
+    lastname: name.split(' ').slice(1).join(' ') || '',
+    phone: phone,
+    channels: ['mobile_money', 'card', 'bank_transfer'],
+    metadata: {
+      custom_fields: [
+        { display_name: 'Service',  variable_name: 'service',  value: currentService.name },
+        { display_name: 'Quantity', variable_name: 'quantity', value: qty },
+        { display_name: 'Link',     variable_name: 'link',     value: link },
+      ]
+    },
+    onClose: function() {
+      btnPay.disabled = false;
+      btnPay.textContent = '📲 Pay with MoMo / Card';
+    },
+    callback: function(response) {
+      saveOrderToFirebase({
+        ref: response.reference,
+        name, phone, email, link,
+        service: currentService.name,
+        platform: currentService.platform,
+        quantity: qty,
+        amountGHC: amountPesewas / 100,
+        status: 'paid',
+      });
+    }
+  });
+  handler.openIframe();
+});
+
+// ── SAVE ORDER TO FIREBASE ──
+async function saveOrderToFirebase(order) {
+  try {
+    if (window._firebaseReady) {
+      await window._addDoc(window._collection(window._db, 'orders'), {
+        ...order,
+        createdAt: window._serverTimestamp(),
+      });
+    }
+  } catch (err) {
+    console.error('Firebase save error:', err);
+  } finally {
+    closeModal();
+    showSuccess(order.ref, order.name, order.service, order.link);
+  }
+}
+
+// ── SHOW SUCCESS ──
+function showSuccess(ref, name, service, link) {
+  successRef.textContent = 'Ref: ' + ref;
+  const waMsg = encodeURIComponent(`Hi BillSMM! I just paid for my order.\nName: ${name}\nService: ${service}\nLink: ${link}\nRef: ${ref}`);
+  successWaBtn.href = `https://wa.me/233538399881?text=${waMsg}`;
+  successOverlay.classList.add('open');
+  btnPay.disabled = false;
+  btnPay.textContent = '📲 Pay with MoMo / Card';
+}
+
+closeSuccess.addEventListener('click', () => successOverlay.classList.remove('open'));
+
+// ── REPLACE ORDER BUTTONS ──
+// Map service card order buttons to openPayModal
+document.querySelectorAll('.btn-order').forEach((btn, idx) => {
+  const card = btn.closest('.service-card, .combo-card');
+  if (!card) return;
+  const h3 = card.querySelector('h3');
+  if (!h3) return;
+  const cardTitle = h3.textContent.trim();
+
+  // Find matching service
+  let matchIdx = SERVICES.findIndex(s => cardTitle.includes(s.name.replace(/^[^\w]+/, '').split('–')[0].trim()) || s.name.includes(cardTitle.split('–')[0].trim()));
+  if (matchIdx === -1) matchIdx = idx < SERVICES.length ? idx : 0;
+
+  btn.removeAttribute('href');
+  btn.style.cursor = 'pointer';
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openPayModal(matchIdx);
+  });
+});
+
+// Bundle main button
+const bundleBtn = document.querySelector('.bundle .btn-primary');
+if (bundleBtn) {
+  bundleBtn.removeAttribute('href');
+  bundleBtn.style.cursor = 'pointer';
+  bundleBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openPayModal(SERVICES.findIndex(s => s.name.includes('TikTok Growth Bundle')));
+  });
+}
+
+// Calc order button → open modal with pre-selected service
+const calcOrderBtn = document.getElementById('calcOrder');
+if (calcOrderBtn) {
+  calcOrderBtn.removeAttribute('href');
+  calcOrderBtn.style.cursor = 'pointer';
+  calcOrderBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const serviceSelect = document.getElementById('calcService');
+    const label = serviceSelect.options[serviceSelect.selectedIndex].text.replace(/\s*\(.*\)/, '').trim();
+    let idx = SERVICES.findIndex(s => s.name.includes(label.split('–')[0].trim()) || label.includes(s.name.split('–')[0].replace(/^[^\w]+/,'').trim()));
+    if (idx === -1) idx = 0;
+    openPayModal(idx);
+  });
+}
 </script>
 </body>
 </html>
